@@ -1,138 +1,200 @@
-
 # CareBridge
 
 ### Intelligent Patient Record & Clinical Continuity Platform
 
-CareBridge is a healthcare platform that helps people keep their medical records organized in one place.
+CareBridge is a healthcare platform designed to help patients organize, access, and understand their medical records in one place.
 
-Medical documents like prescriptions, lab reports, discharge summaries, and medical reports are often stored in different places. When someone needs to look back at their medical history, finding the right information can be difficult.
-
-CareBridge brings these records together and uses AI to help organize and understand the information already present in them.
+Medical information such as prescriptions, lab reports, discharge summaries, and other health records can be difficult to manage when they are spread across different files and sources. CareBridge provides a centralized interface where users can manage their records and interact with AI-assisted features.
 
 ## The Problem
 
-Medical records are often scattered across different files, folders, apps, and physical documents.
+Medical records are often scattered across different files, folders, applications, and physical documents.
 
 This can make it difficult to:
 
-- Keep track of past medical records
-- Find specific information quickly
-- Understand complicated medical terminology
-- See what has changed between two records
-- Maintain a clear timeline of medical information
+* Keep track of medical records
+* Find important information quickly
+* Understand complex medical information
+* Follow a patient's documented history
+* Identify changes between records
 
 ## Our Solution
 
-CareBridge lets users upload their medical documents and turns the information into an organized record.
+CareBridge provides a centralized platform for managing patient records and exploring the information contained in them.
 
-The platform helps users:
+The platform includes features for:
 
-- Upload and manage medical documents
-- Extract useful information from records
-- View records through a timeline
-- Compare two records and see what has changed
-- Ask questions about their uploaded records
-- Get simpler explanations of information found in their documents
+* Managing patient information
+* Uploading and organizing medical records
+* Viewing individual records
+* Exploring patient history
+* AI-assisted interaction with medical information
+* Finding relevant healthcare information
+* Managing care-related information through a single interface
 
-The goal is simple: **make existing medical information easier to organize and understand.**
+The goal is simple: **make medical information easier to organize, access, and understand.**
 
 ## Key Features
 
-### Upload Medical Records
+### Patient Dashboard
 
-Users can upload prescriptions, lab reports, discharge summaries, and other medical documents.
+A centralized dashboard provides an overview of the patient's records and important information.
 
-### AI-Assisted Record Extraction
+### Medical Record Management
 
-CareBridge processes uploaded documents and organizes important information into a structured format.
+Users can upload and manage different types of medical records through the CareBridge interface.
 
-### Health Timeline
+### Record Inspection
 
-Medical records can be viewed chronologically, making it easier to follow the history of documented information.
+Individual records can be opened and inspected through a dedicated record interface.
 
-### Compare Records
+### AI Assistant
 
-Users can compare two records and see documented changes between them, such as changes in medicines, test values, or other recorded information.
+CareBridge includes an AI-powered assistant that allows users to interact with information related to their records.
 
-### Ask My Records
+### Patient Information
 
-Users can ask questions about their uploaded documents and get answers based on the information available in those records.
+The platform provides a structured view of patient-related information to make important details easier to access.
 
-### Simple Explanation
+### Care Management
 
-Medical terms and complicated information from documents can be explained in simpler language.
+CareBridge includes interfaces for exploring care-related information and supporting continuity of care.
 
 ## How CareBridge Works
 
 ```text
-Upload Medical Record
-        ↓
-Document Processing
-        ↓
-Information Extraction
-        ↓
-Structured Record
-        ↓
-Health Timeline
-        ↓
-Compare / Ask / Explain
-
+Patient
+   ↓
+CareBridge Dashboard
+   ↓
+Upload / Manage Records
+   ↓
+View Patient Information
+   ↓
+Inspect Medical Records
+   ↓
+AI-Assisted Interaction
+   ↓
+Better Access to Existing Medical Information
 ```
 
 ## Technology Used
 
 ### Frontend
 
-- React
-- Tailwind CSS
-- JavaScript
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* Lucide React
 
-### Backend
+### Backend / Server
 
-- Python
-- FastAPI
+* Node.js
+* Express
+* TypeScript
 
-### AI and Document Processing
+### AI
 
-- OCR
-- Large Language Model APIs
-- Python-based document processing
+* Google Gemini API
 
-### Database and Authentication
+### Database & Authentication
 
-- Firebase Authentication
-- Firebase Firestore
-- Firebase Storage
+* Firebase Authentication
+* Firebase Firestore
 
-## Privacy and Safety
+## Project Structure
 
-CareBridge is designed to help users organize and understand information that is already present in their medical records.
+```text
+CareBridge
+├── App.tsx
+├── LoginPage.tsx
+├── PatientDetailsPage.tsx
+├── UploadRecordCard.tsx
+├── UploadRecordModal.tsx
+├── RecordInspectionModal.tsx
+├── CareBridgeChatbot.tsx
+├── CareScheduleHub.tsx
+├── CareTeamMapsFinder.tsx
+├── ClinicalSearchExplorer.tsx
+├── firebase.ts
+├── firestore.rules
+├── server.ts
+└── package.json
+```
 
-It is not designed to diagnose medical conditions or prescribe treatment. Medical decisions should always be made with a qualified healthcare professional.
+## Getting Started
 
-## Example Use Case
+### Prerequisites
 
-Imagine a patient has several prescriptions and lab reports saved as different files.
+Make sure you have the following installed:
 
-Instead of opening each file separately, they can upload the records to CareBridge and view them in one organized timeline.
+* Node.js
+* npm
+* A Firebase project
+* Google Gemini API access
 
-They can then compare two records to see what information has changed, or ask questions about information contained in their uploaded documents.
+### Installation
 
-## Future Plans
+Clone the repository:
 
-Some features we would like to explore in the future include:
+```bash
+git clone <repository-url>
+```
 
-- Better support for handwritten documents
-- More medical document formats
-- Multilingual explanations
-- Doctor-patient record sharing
-- Integration with healthcare information systems
-- More advanced record comparison
+Navigate to the project:
 
-##
+```bash
+cd <repository-folder>
+```
 
-###
+Install dependencies:
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a `.env` file containing the required project configuration.
+
+Do not commit API keys, credentials, or other sensitive information to the repository.
+
+### Run the Project
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open the local URL provided by Vite in your browser.
+
+## Privacy & Safety
+
+CareBridge is designed as a healthcare information management and AI-assisted understanding platform.
+
+The system is not intended to diagnose medical conditions, prescribe medication, or replace professional medical advice.
+
+Medical decisions should always be made by qualified healthcare professionals.
+
+Users should avoid uploading sensitive medical information to development or demonstration environments unless appropriate security and access controls are in place.
+
+## Future Improvements
+
+Potential future improvements include:
+
+* More advanced medical document processing
+* Improved record comparison
+* Support for additional medical document formats
+* Multilingual explanations
+* Improved patient-doctor record sharing
+* More advanced AI-assisted record understanding
+* Integration with healthcare information systems
+* Enhanced document storage and processing
 
 ## Disclaimer
 
-CareBridge is a hackathon/prototype project. It is intended to help users organize and understand their existing medical records and should not be used as a replacement for professional medical advice, diagnosis, or treatment.
+CareBridge is a hackathon/prototype project created to demonstrate an approach to organizing and interacting with medical information.
+
+It should not be used as a replacement for professional medical advice, diagnosis, or treatment.
