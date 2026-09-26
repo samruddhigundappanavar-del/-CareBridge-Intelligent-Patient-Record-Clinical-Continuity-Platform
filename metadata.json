@@ -1,0 +1,6 @@
+{
+  "name": "CareBridge — Medical Records Workspace",
+  "description": "Clinical document management and medical record upload workspace for patients and care providers.",
+  "requestFramePermissions": ["microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

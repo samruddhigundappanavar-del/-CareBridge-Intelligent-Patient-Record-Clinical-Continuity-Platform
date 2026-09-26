@@ -1,0 +1,475 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Default-Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprint: MedicalRecord
+    function isValidMedicalRecord(data) {
+      return data.keys().hasAll([
+          'ownerId',
+          'title',
+          'fileName',
+          'category',
+          'fileType',
+          'fileSize',
+          'uploadedAt',
+          'provider',
+          'status',
+          'referenceId',
+          'notes',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerId',
+          'title',
+          'fileName',
+          'category',
+          'fileType',
+          'fileSize',
+          'uploadedAt',
+          'provider',
+          'status',
+          'referenceId',
+          'notes',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+        data.ownerId == request.auth.uid &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 240 &&
+        data.fileName is string && data.fileName.size() >= 1 && data.fileName.size() <= 240 &&
+        data.category is string && data.category.size() <= 64 &&
+        data.category in [
+          'Prescription',
+          'Blood / Lab Report',
+          'Discharge Summary',
+          'Medical Report',
+          'Medical Certificate'
+        ] &&
+        data.fileType is string && data.fileType.size() <= 16 &&
+        data.fileType in ['PDF', 'JPG', 'PNG'] &&
+        data.fileSize is string && data.fileSize.size() >= 1 && data.fileSize.size() <= 32 &&
+        data.uploadedAt is string && data.uploadedAt.size() >= 4 && data.uploadedAt.size() <= 40 &&
+        data.provider is string && data.provider.size() >= 1 && data.provider.size() <= 240 &&
+        data.status is string && data.status.size() <= 32 &&
+        data.status in ['Verified', 'Ready for Review'] &&
+        data.referenceId is string && data.referenceId.size() >= 1 && data.referenceId.size() <= 64 &&
+        data.notes is string && data.notes.size() <= 5000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // Validation Blueprint: ChatMessage
+    function isValidChatMessage(data) {
+      return data.keys().hasAll([
+          'ownerId',
+          'role',
+          'text',
+          'modelUsed',
+          'assistantPersona',
+          'createdAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerId',
+          'role',
+          'text',
+          'modelUsed',
+          'assistantPersona',
+          'createdAt'
+        ]) &&
+        data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+        data.ownerId == request.auth.uid &&
+        data.role is string && data.role.size() <= 16 &&
+        data.role in ['user', 'model'] &&
+        data.text is string && data.text.size() >= 1 && data.text.size() <= 16000 &&
+        data.modelUsed is string && data.modelUsed.size() >= 1 && data.modelUsed.size() <= 80 &&
+        data.assistantPersona is string && data.assistantPersona.size() >= 1 && data.assistantPersona.size() <= 80 &&
+        data.createdAt is timestamp;
+    }
+
+    // Validation Blueprint: PatientProfile (PII Isolated to Owner)
+    function isValidPatientProfile(data) {
+      return data.keys().hasAll([
+          'ownerId',
+          'fullName',
+          'mrn',
+          'dateOfBirth',
+          'gender',
+          'bloodType',
+          'height',
+          'weight',
+          'phone',
+          'email',
+          'address',
+          'emergencyContactName',
+          'emergencyContactPhone',
+          'primaryPhysician',
+          'insuranceProvider',
+          'insurancePolicyNumber',
+          'allergies',
+          'chronicConditions',
+          'bloodPressure',
+          'heartRate',
+          'spO2',
+          'fastingGlucose',
+          'clinicalSummary',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerId',
+          'fullName',
+          'mrn',
+          'dateOfBirth',
+          'gender',
+          'bloodType',
+          'height',
+          'weight',
+          'phone',
+          'email',
+          'address',
+          'emergencyContactName',
+          'emergencyContactPhone',
+          'primaryPhysician',
+          'insuranceProvider',
+          'insurancePolicyNumber',
+          'allergies',
+          'chronicConditions',
+          'bloodPressure',
+          'heartRate',
+          'spO2',
+          'fastingGlucose',
+          'clinicalSummary',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+        data.ownerId == request.auth.uid &&
+        data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 120 &&
+        data.mrn is string && data.mrn.size() >= 1 && data.mrn.size() <= 64 &&
+        data.dateOfBirth is string && data.dateOfBirth.size() <= 40 &&
+        data.gender is string && data.gender.size() <= 40 &&
+        data.bloodType is string && data.bloodType.size() <= 16 &&
+        data.height is string && data.height.size() <= 32 &&
+        data.weight is string && data.weight.size() <= 32 &&
+        data.phone is string && data.phone.size() <= 64 &&
+        data.email is string && data.email.size() <= 160 &&
+        data.address is string && data.address.size() <= 300 &&
+        data.emergencyContactName is string && data.emergencyContactName.size() <= 160 &&
+        data.emergencyContactPhone is string && data.emergencyContactPhone.size() <= 64 &&
+        data.primaryPhysician is string && data.primaryPhysician.size() <= 160 &&
+        data.insuranceProvider is string && data.insuranceProvider.size() <= 160 &&
+        data.insurancePolicyNumber is string && data.insurancePolicyNumber.size() <= 80 &&
+        data.allergies is string && data.allergies.size() <= 1000 &&
+        data.chronicConditions is string && data.chronicConditions.size() <= 1000 &&
+        data.bloodPressure is string && data.bloodPressure.size() <= 40 &&
+        data.heartRate is string && data.heartRate.size() <= 40 &&
+        data.spO2 is string && data.spO2.size() <= 40 &&
+        data.fastingGlucose is string && data.fastingGlucose.size() <= 40 &&
+        data.clinicalSummary is string && data.clinicalSummary.size() <= 4000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // Validation Blueprint: MedicationReminder
+    function isValidMedicationReminder(data) {
+      return data.keys().hasAll([
+          'ownerId',
+          'medicationName',
+          'dosage',
+          'frequency',
+          'scheduleTime',
+          'timeSlot',
+          'instructions',
+          'prescribedBy',
+          'refillsRemaining',
+          'reminderEnabled',
+          'takenToday',
+          'lastTakenDate',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerId',
+          'medicationName',
+          'dosage',
+          'frequency',
+          'scheduleTime',
+          'timeSlot',
+          'instructions',
+          'prescribedBy',
+          'refillsRemaining',
+          'reminderEnabled',
+          'takenToday',
+          'lastTakenDate',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+        data.ownerId == request.auth.uid &&
+        data.medicationName is string && data.medicationName.size() >= 1 && data.medicationName.size() <= 120 &&
+        data.dosage is string && data.dosage.size() >= 1 && data.dosage.size() <= 80 &&
+        data.frequency is string && data.frequency.size() <= 32 &&
+        data.frequency in ['Once daily', 'Twice daily', 'Every 8 hours', 'Weekly', 'As needed'] &&
+        data.scheduleTime is string && data.scheduleTime.size() >= 1 && data.scheduleTime.size() <= 16 &&
+        data.timeSlot is string && data.timeSlot.size() <= 24 &&
+        data.timeSlot in ['Morning', 'Afternoon', 'Evening', 'Bedtime'] &&
+        data.instructions is string && data.instructions.size() <= 500 &&
+        data.prescribedBy is string && data.prescribedBy.size() <= 160 &&
+        data.refillsRemaining is number && data.refillsRemaining >= 0 && data.refillsRemaining <= 99 &&
+        data.reminderEnabled is bool &&
+        data.takenToday is bool &&
+        data.lastTakenDate is string && data.lastTakenDate.size() <= 32 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // Validation Blueprint: ClinicalAppointment
+    function isValidClinicalAppointment(data) {
+      return data.keys().hasAll([
+          'ownerId',
+          'title',
+          'doctorName',
+          'specialty',
+          'facilityName',
+          'appointmentDate',
+          'appointmentTime',
+          'visitType',
+          'status',
+          'notes',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerId',
+          'title',
+          'doctorName',
+          'specialty',
+          'facilityName',
+          'appointmentDate',
+          'appointmentTime',
+          'visitType',
+          'status',
+          'notes',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 &&
+        data.ownerId == request.auth.uid &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 160 &&
+        data.doctorName is string && data.doctorName.size() >= 1 && data.doctorName.size() <= 120 &&
+        data.specialty is string && data.specialty.size() <= 120 &&
+        data.facilityName is string && data.facilityName.size() <= 200 &&
+        data.appointmentDate is string && data.appointmentDate.size() >= 4 && data.appointmentDate.size() <= 20 &&
+        data.appointmentTime is string && data.appointmentTime.size() >= 1 && data.appointmentTime.size() <= 16 &&
+        data.visitType is string && data.visitType.size() <= 32 &&
+        data.visitType in ['In-Person Clinic', 'Telehealth Video', 'Lab / Diagnostic'] &&
+        data.status is string && data.status.size() <= 32 &&
+        data.status in ['Confirmed', 'Completed', 'Rescheduled', 'Cancelled'] &&
+        data.notes is string && data.notes.size() <= 1000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // Collection: /records/{recordId}
+    match /records/{recordId} {
+      allow get: if isSignedIn() && isValidId(recordId) && (resource == null || existing().ownerId == request.auth.uid);
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+        isValidId(recordId) &&
+        isValidMedicalRecord(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn() &&
+        isValidId(recordId) &&
+        isValidMedicalRecord(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          incoming().diff(existing()).affectedKeys().hasOnly(['notes', 'title', 'category', 'status', 'updatedAt'])
+        );
+
+      allow delete: if isSignedIn() &&
+        isValidId(recordId) &&
+        existing().ownerId == request.auth.uid;
+    }
+
+    // Collection: /chatMessages/{messageId}
+    match /chatMessages/{messageId} {
+      allow get: if isSignedIn() && isValidId(messageId) && (resource == null || existing().ownerId == request.auth.uid);
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+        isValidId(messageId) &&
+        isValidChatMessage(incoming()) &&
+        incoming().createdAt == request.time;
+
+      allow update: if false;
+
+      allow delete: if isSignedIn() &&
+        isValidId(messageId) &&
+        existing().ownerId == request.auth.uid;
+    }
+
+    // Collection: /patients/{patientId} (Strictly Owner-Only PII Isolation)
+    match /patients/{patientId} {
+      allow get: if isSignedIn() &&
+        isValidId(patientId) &&
+        patientId == request.auth.uid &&
+        (resource == null || existing().ownerId == request.auth.uid);
+      allow list: if false;
+
+      allow create: if isSignedIn() &&
+        isValidId(patientId) &&
+        patientId == request.auth.uid &&
+        isValidPatientProfile(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn() &&
+        isValidId(patientId) &&
+        patientId == request.auth.uid &&
+        isValidPatientProfile(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().mrn == existing().mrn &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'fullName',
+            'dateOfBirth',
+            'gender',
+            'bloodType',
+            'height',
+            'weight',
+            'phone',
+            'email',
+            'address',
+            'emergencyContactName',
+            'emergencyContactPhone',
+            'primaryPhysician',
+            'insuranceProvider',
+            'insurancePolicyNumber',
+            'allergies',
+            'chronicConditions',
+            'bloodPressure',
+            'heartRate',
+            'spO2',
+            'fastingGlucose',
+            'clinicalSummary',
+            'updatedAt'
+          ])
+        );
+
+      allow delete: if false;
+    }
+
+    // Collection: /medications/{medicationId}
+    match /medications/{medicationId} {
+      allow get: if isSignedIn() && isValidId(medicationId) && (resource == null || existing().ownerId == request.auth.uid);
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+        isValidId(medicationId) &&
+        isValidMedicationReminder(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn() &&
+        isValidId(medicationId) &&
+        isValidMedicationReminder(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          (incoming().diff(existing()).affectedKeys().hasOnly(['takenToday', 'lastTakenDate', 'updatedAt'])) ||
+          (incoming().diff(existing()).affectedKeys().hasOnly(['reminderEnabled', 'updatedAt'])) ||
+          (incoming().diff(existing()).affectedKeys().hasOnly([
+            'medicationName',
+            'dosage',
+            'frequency',
+            'scheduleTime',
+            'timeSlot',
+            'instructions',
+            'prescribedBy',
+            'refillsRemaining',
+            'reminderEnabled',
+            'takenToday',
+            'lastTakenDate',
+            'updatedAt'
+          ]))
+        );
+
+      allow delete: if isSignedIn() &&
+        isValidId(medicationId) &&
+        existing().ownerId == request.auth.uid;
+    }
+
+    // Collection: /appointments/{appointmentId}
+    match /appointments/{appointmentId} {
+      allow get: if isSignedIn() && isValidId(appointmentId) && (resource == null || existing().ownerId == request.auth.uid);
+      allow list: if isSignedIn() && existing().ownerId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+        isValidId(appointmentId) &&
+        isValidClinicalAppointment(incoming()) &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn() &&
+        isValidId(appointmentId) &&
+        isValidClinicalAppointment(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          (incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])) ||
+          (incoming().diff(existing()).affectedKeys().hasOnly([
+            'title',
+            'doctorName',
+            'specialty',
+            'facilityName',
+            'appointmentDate',
+            'appointmentTime',
+            'visitType',
+            'status',
+            'notes',
+            'updatedAt'
+          ]))
+        );
+
+      allow delete: if isSignedIn() &&
+        isValidId(appointmentId) &&
+        existing().ownerId == request.auth.uid;
+    }
+  }
+}

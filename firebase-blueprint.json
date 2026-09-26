@@ -1,0 +1,225 @@
+{
+  "entities": {
+    "MedicalRecord": {
+      "title": "MedicalRecord",
+      "description": "A patient clinical document record stored in CareBridge.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string", "description": "Firebase Auth UID of the record owner." },
+        "title": { "type": "string", "description": "Human-readable title of the medical record." },
+        "fileName": { "type": "string", "description": "Original file name with extension." },
+        "category": {
+          "type": "string",
+          "enum": [
+            "Prescription",
+            "Blood / Lab Report",
+            "Discharge Summary",
+            "Medical Report",
+            "Medical Certificate"
+          ]
+        },
+        "fileType": { "type": "string", "enum": ["PDF", "JPG", "PNG"] },
+        "fileSize": { "type": "string", "description": "Formatted file size string." },
+        "uploadedAt": { "type": "string", "description": "ISO date string (YYYY-MM-DD)." },
+        "provider": { "type": "string", "description": "Issuing clinic, physician, or lab name." },
+        "status": { "type": "string", "enum": ["Verified", "Ready for Review"] },
+        "referenceId": { "type": "string", "description": "CareBridge clinical document reference code." },
+        "notes": { "type": "string", "description": "Clinical summary or voice-transcribed notes." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "ownerId",
+        "title",
+        "fileName",
+        "category",
+        "fileType",
+        "fileSize",
+        "uploadedAt",
+        "provider",
+        "status",
+        "referenceId",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A message in the CareBridge AI clinical assistant conversation.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string", "description": "Firebase Auth UID of the patient." },
+        "role": { "type": "string", "enum": ["user", "model"] },
+        "text": { "type": "string", "description": "Message markdown content." },
+        "modelUsed": { "type": "string", "description": "Gemini model identifier used." },
+        "assistantPersona": { "type": "string", "description": "Selected clinical specialist persona." },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerId", "role", "text", "modelUsed", "assistantPersona", "createdAt"]
+    },
+    "PatientProfile": {
+      "title": "PatientProfile",
+      "description": "Comprehensive demographic, insurance, vital signs, and medical chart details for a patient.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string", "description": "Firebase Auth UID of the patient." },
+        "fullName": { "type": "string" },
+        "mrn": { "type": "string" },
+        "dateOfBirth": { "type": "string" },
+        "gender": { "type": "string" },
+        "bloodType": { "type": "string" },
+        "height": { "type": "string" },
+        "weight": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" },
+        "emergencyContactName": { "type": "string" },
+        "emergencyContactPhone": { "type": "string" },
+        "primaryPhysician": { "type": "string" },
+        "insuranceProvider": { "type": "string" },
+        "insurancePolicyNumber": { "type": "string" },
+        "allergies": { "type": "string" },
+        "chronicConditions": { "type": "string" },
+        "bloodPressure": { "type": "string" },
+        "heartRate": { "type": "string" },
+        "spO2": { "type": "string" },
+        "fastingGlucose": { "type": "string" },
+        "clinicalSummary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "ownerId",
+        "fullName",
+        "mrn",
+        "dateOfBirth",
+        "gender",
+        "bloodType",
+        "height",
+        "weight",
+        "phone",
+        "email",
+        "address",
+        "emergencyContactName",
+        "emergencyContactPhone",
+        "primaryPhysician",
+        "insuranceProvider",
+        "insurancePolicyNumber",
+        "allergies",
+        "chronicConditions",
+        "bloodPressure",
+        "heartRate",
+        "spO2",
+        "fastingGlucose",
+        "clinicalSummary",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "MedicationReminder": {
+      "title": "MedicationReminder",
+      "description": "A patient prescription dose reminder and adherence tracker.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "medicationName": { "type": "string" },
+        "dosage": { "type": "string" },
+        "frequency": {
+          "type": "string",
+          "enum": ["Once daily", "Twice daily", "Every 8 hours", "Weekly", "As needed"]
+        },
+        "scheduleTime": { "type": "string" },
+        "timeSlot": {
+          "type": "string",
+          "enum": ["Morning", "Afternoon", "Evening", "Bedtime"]
+        },
+        "instructions": { "type": "string" },
+        "prescribedBy": { "type": "string" },
+        "refillsRemaining": { "type": "number" },
+        "reminderEnabled": { "type": "boolean" },
+        "takenToday": { "type": "boolean" },
+        "lastTakenDate": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "ownerId",
+        "medicationName",
+        "dosage",
+        "frequency",
+        "scheduleTime",
+        "timeSlot",
+        "instructions",
+        "prescribedBy",
+        "refillsRemaining",
+        "reminderEnabled",
+        "takenToday",
+        "lastTakenDate",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ClinicalAppointment": {
+      "title": "ClinicalAppointment",
+      "description": "A scheduled clinical consultation, telehealth session, or laboratory blood draw.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "title": { "type": "string" },
+        "doctorName": { "type": "string" },
+        "specialty": { "type": "string" },
+        "facilityName": { "type": "string" },
+        "appointmentDate": { "type": "string" },
+        "appointmentTime": { "type": "string" },
+        "visitType": {
+          "type": "string",
+          "enum": ["In-Person Clinic", "Telehealth Video", "Lab / Diagnostic"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Confirmed", "Completed", "Rescheduled", "Cancelled"]
+        },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "ownerId",
+        "title",
+        "doctorName",
+        "specialty",
+        "facilityName",
+        "appointmentDate",
+        "appointmentTime",
+        "visitType",
+        "status",
+        "notes",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/records/{recordId}": {
+      "schema": { "$ref": "#/entities/MedicalRecord" },
+      "description": "Patient medical records isolated by ownerId."
+    },
+    "/chatMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Clinical AI chat history isolated by ownerId."
+    },
+    "/patients/{patientId}": {
+      "schema": { "$ref": "#/entities/PatientProfile" },
+      "description": "Patient profile and clinical chart isolated by ownerId == patientId."
+    },
+    "/medications/{medicationId}": {
+      "schema": { "$ref": "#/entities/MedicationReminder" },
+      "description": "Medication reminders and adherence status isolated by ownerId."
+    },
+    "/appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/ClinicalAppointment" },
+      "description": "Clinical appointments isolated by ownerId."
+    }
+  }
+}
