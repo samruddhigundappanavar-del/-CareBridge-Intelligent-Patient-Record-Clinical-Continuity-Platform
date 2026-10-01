@@ -193,8 +193,4 @@ Potential future improvements include:
 * Integration with healthcare information systems
 * Enhanced document storage and processing
 
-## Disclaimer
 
-CareBridge is a hackathon/prototype project created to demonstrate an approach to organizing and interacting with medical information.
-
-It should not be used as a replacement for professional medical advice, diagnosis, or treatment.
