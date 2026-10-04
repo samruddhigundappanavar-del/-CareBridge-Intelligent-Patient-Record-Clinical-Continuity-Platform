@@ -1,12 +1,11 @@
-# CareBridge
+CareBridge
 
 ### Intelligent Patient Record & Clinical Continuity Platform
 
 CareBridge is a healthcare platform designed to help patients organize, access, and understand their medical records in one place.
 
 Medical information such as prescriptions, lab reports, discharge summaries, and other health records can be difficult to manage when they are spread across different files and sources. CareBridge provides a centralized interface where users can manage their records and interact with AI-assisted features.
-
-## The Problem
+ The Problem
 
 Medical records are often scattered across different files, folders, applications, and physical documents.
 
